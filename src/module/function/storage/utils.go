@@ -16,3 +16,7 @@ func ensurePathExist(path string) (isCreatedNew bool) {
 	// TODO
 	return false
 }
+
+func isPathExists(path string) bool {
+	return false
+}

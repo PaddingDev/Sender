@@ -1,10 +1,10 @@
 package storage
 
 import (
+	"github.com/PaddingDEV/Sender/module/function/storage/model"
 	"github.com/PaddingDEV/Sender/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"path/filepath"
 )
 
 func SaveFileHandler(c *gin.Context) {
@@ -14,10 +14,14 @@ func SaveFileHandler(c *gin.Context) {
 		utils.HttpReturnWithErrAndAbort(c, http.StatusUnauthorized, "No file is received")
 	}
 
-	extension := filepath.Ext(file.Filename)
-	newFileName := getFileName() + extension
+	uuid := getFileUuid()
+	path := getFilePath(uuid)
+	ensurePathExist(path)
 
-	if err := c.SaveUploadedFile(file, calcFilePath()+newFileName); err != nil {
+	infoJson, _ := model.CreateFileInfoJson(file.Filename, "")
+	utils.WriteToFile(path+"info.json", infoJson)
+
+	if err := c.SaveUploadedFile(file, path+file.Filename); err != nil {
 		utils.HttpReturnWithErrAndAbort(c,
 			http.StatusInternalServerError,
 			"Save failed")

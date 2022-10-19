@@ -1,15 +1,20 @@
 package storage
 
-import "github.com/google/uuid"
+import (
+	"github.com/PaddingDEV/Sender/module/cfg"
+	"github.com/google/uuid"
+	"os"
+)
 
 func getFileUuid() string {
-	// TODO
 	return uuid.New().String()
 }
 
 func getFilePath(uuid string) string {
-	// TODO
-	return "/some/path/on/server/" + uuid
+	if len(uuid) < 2 {
+
+	}
+	return cfg.GetCfg().StorageBasePath + uuid[:2] + "/" + uuid
 }
 
 func ensurePathExist(path string) (isCreatedNew bool) {
@@ -18,5 +23,6 @@ func ensurePathExist(path string) (isCreatedNew bool) {
 }
 
 func isPathExists(path string) bool {
-	return false
+	_, err := os.Stat(path)
+	return !os.IsNotExist(err)
 }

@@ -16,11 +16,15 @@ func ReadFileToByte(file string) (bs []byte, err error) {
 }
 
 func WriteToFile(file, content string) error {
-	fo, err := os.Create("output.txt")
+	fo, err := os.Create(file)
 	if err != nil {
 		return err
 	}
 	defer fo.Close()
 	_, err = fo.WriteString(content)
 	return err
+}
+
+func RemoveFile(file string) error {
+	return os.Remove(file)
 }

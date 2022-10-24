@@ -5,6 +5,7 @@ import (
 	"github.com/PaddingDEV/Sender/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"time"
 )
 
 func GetFileHandler(c *gin.Context) {
@@ -39,11 +40,18 @@ func GetFileHandler(c *gin.Context) {
 			http.StatusBadRequest,
 			"failed to load info")
 	}
+	if time.Now().After(info.ExpiredAt) {
+		utils.HttpReturnWithErrAndAbort(
+			c,
+			http.StatusBadRequest,
+			"expired!")
+		_ = utils.RemoveFile(getFileStorePath(uuid))
+	}
 	if info.Token != token {
 		utils.HttpReturnWithErrAndAbort(
 			c,
 			http.StatusUnauthorized,
 			"Wrong token")
 	}
-	c.FileAttachment(path+info.OriginFileName, info.OriginFileName)
+	c.FileAttachment(getFileStorePath(uuid), info.OriginFileName)
 }

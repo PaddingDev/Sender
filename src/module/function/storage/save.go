@@ -28,9 +28,16 @@ func SaveFileHandler(c *gin.Context) {
 	}
 
 	infoJson, _ := model.CreateFileInfoJson(file.Filename, "", expireAt)
-	_ = utils.WriteToFile(getFileInfoPath(uuid), infoJson)
+	err = utils.WriteToFile(getFileInfoPath(uuid), infoJson)
+	if err != nil {
+		_ = os.RemoveAll(path)
+		utils.HttpReturnWithErrAndAbort(c,
+			http.StatusInternalServerError,
+			"failed to save info")
+		return
+	}
 
-	if err := c.SaveUploadedFile(file, getFileStorePath(uuid)); err != nil {
+	if err = c.SaveUploadedFile(file, getFileStorePath(uuid)); err != nil {
 		_ = os.RemoveAll(path)
 		utils.HttpReturnWithErrAndAbort(c,
 			http.StatusInternalServerError,

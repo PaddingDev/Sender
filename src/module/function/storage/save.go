@@ -5,6 +5,7 @@ import (
 	"github.com/PaddingDEV/Sender/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -30,7 +31,7 @@ func SaveFileHandler(c *gin.Context) {
 	_ = utils.WriteToFile(getFileInfoPath(uuid), infoJson)
 
 	if err := c.SaveUploadedFile(file, getFileStorePath(uuid)); err != nil {
-		// TODO: remove
+		_ = os.RemoveAll(path)
 		utils.HttpReturnWithErrAndAbort(c,
 			http.StatusInternalServerError,
 			"Save failed")

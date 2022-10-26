@@ -20,7 +20,7 @@ func SaveFileHandler(c *gin.Context) {
 	}
 
 	expireAt := time.Now()
-	expireAt = expireAt.Add(time.Duration(expVal) * time.Minute)
+	expireAt = expireAt.Add(time.Duration(expVal) * cfg.GetExpTimeUnit())
 
 	if err != nil {
 		utils.HttpReturnWithErrAndAbort(c, http.StatusUnauthorized, "No file is received")

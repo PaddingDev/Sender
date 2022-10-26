@@ -1,14 +1,14 @@
 package storage
 
 import (
-	"github.com/PaddingDEV/Sender/module/function/storage/model"
+	"github.com/PaddingDEV/Sender/module/service/storage/model"
 	"github.com/PaddingDEV/Sender/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"time"
 )
 
-func getFileInfoHandler(c *gin.Context) {
+func getFileHandler(c *gin.Context) {
 	uuid := c.GetString(model.UuidHeader)
 	token := c.GetString(model.TokenHeader)
 	if uuid == "" {
@@ -53,6 +53,5 @@ func getFileInfoHandler(c *gin.Context) {
 			http.StatusUnauthorized,
 			"Wrong token")
 	}
-	info.Token = ""
-	c.JSON(http.StatusOK, info)
+	c.FileAttachment(getFileStorePath(uuid), info.OriginFileName)
 }

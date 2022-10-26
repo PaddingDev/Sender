@@ -2,7 +2,7 @@ package storage
 
 import (
 	"github.com/PaddingDEV/Sender/module/cfg"
-	"github.com/PaddingDEV/Sender/module/function/storage/model"
+	"github.com/PaddingDEV/Sender/module/service/storage/model"
 	"github.com/PaddingDEV/Sender/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"

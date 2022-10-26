@@ -9,8 +9,8 @@ import (
 )
 
 func GetFileInfoHandler(c *gin.Context) {
-	uuid := c.GetString("uuid")
-	token := c.GetString("token")
+	uuid := c.GetString(model.UuidHeader)
+	token := c.GetString(model.TokenHeader)
 	if uuid == "" {
 		utils.HttpReturnWithErrAndAbort(
 			c,

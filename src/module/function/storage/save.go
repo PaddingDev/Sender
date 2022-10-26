@@ -11,6 +11,7 @@ import (
 
 func SaveFileHandler(c *gin.Context) {
 	file, err := c.FormFile("file")
+	token := c.GetString(model.TokenHeader)
 
 	// TODO:
 	expireAt := time.Now()
@@ -27,7 +28,7 @@ func SaveFileHandler(c *gin.Context) {
 		utils.HttpReturnWithErrAndAbort(c, http.StatusBadGateway, "No idea")
 	}
 
-	infoJson, _ := model.CreateFileInfoJson(file.Filename, "", expireAt)
+	infoJson, _ := model.CreateFileInfoJson(file.Filename, token, expireAt)
 	err = utils.WriteToFile(getFileInfoPath(uuid), infoJson)
 	if err != nil {
 		_ = os.RemoveAll(path)

@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func GetFileHandler(c *gin.Context) {
+func getFileHandler(c *gin.Context) {
 	uuid := c.GetString(model.UuidHeader)
 	token := c.GetString(model.TokenHeader)
 	if uuid == "" {

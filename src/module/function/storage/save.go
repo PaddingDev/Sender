@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-func SaveFileHandler(c *gin.Context) {
+func uploadFileHandler(c *gin.Context) {
 	file, err := c.FormFile("file")
 	token := c.GetString(model.TokenHeader)
 	expVal := c.GetInt(model.ExpireAtHeader)

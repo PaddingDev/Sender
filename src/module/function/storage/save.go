@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"github.com/PaddingDEV/Sender/module/cfg"
 	"github.com/PaddingDEV/Sender/module/function/storage/model"
 	"github.com/PaddingDEV/Sender/utils"
 	"github.com/gin-gonic/gin"
@@ -12,10 +13,14 @@ import (
 func SaveFileHandler(c *gin.Context) {
 	file, err := c.FormFile("file")
 	token := c.GetString(model.TokenHeader)
+	expVal := c.GetInt(model.ExpireAtHeader)
+	if expVal > cfg.GetCfg().MaxExpireTime || expVal < cfg.GetCfg().MinExpireTime {
+		utils.HttpReturnWithErrAndAbort(c, http.StatusBadRequest, "out of range")
+		return
+	}
 
-	// TODO:
 	expireAt := time.Now()
-	expireAt = expireAt.Add(15 * time.Minute)
+	expireAt = expireAt.Add(time.Duration(expVal) * time.Minute)
 
 	if err != nil {
 		utils.HttpReturnWithErrAndAbort(c, http.StatusUnauthorized, "No file is received")

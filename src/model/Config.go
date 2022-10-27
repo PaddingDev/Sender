@@ -18,6 +18,9 @@ type Config struct {
 
 	AuthType      AuthTypeEnum   `json:"auth_type"`
 	BasicAuthList *BasicAuthList `json:"basic_auth"`
+
+	MaxUploadBytes        int64 `json:"max_upload_bytes"`
+	MaxNormalRequestBytes int64 `json:"max_normal_req_bytes"`
 }
 
 type AuthTypeEnum string

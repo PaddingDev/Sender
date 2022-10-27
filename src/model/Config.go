@@ -15,4 +15,16 @@ type Config struct {
 		'h'  => hour
 		'd'  => day
 	*/
+
+	AuthType      AuthTypeEnum   `json:"auth_type"`
+	BasicAuthList *BasicAuthList `json:"basic_auth"`
 }
+
+type AuthTypeEnum string
+
+const (
+	None      AuthTypeEnum = "None"
+	BasicAuth AuthTypeEnum = "BasicAuth"
+)
+
+type BasicAuthList map[string]string

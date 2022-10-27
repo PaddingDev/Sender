@@ -46,5 +46,9 @@ func GetCfgFromFile(path string) *model.Config {
 		// TODO
 	}
 
+	if _cfg.AuthType == model.BasicAuth && _cfg.BasicAuthList == nil {
+		utils.Panic("Please provide BASIC AUTH LIST!")
+	}
+
 	return _cfg
 }

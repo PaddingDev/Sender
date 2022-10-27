@@ -1,4 +1,4 @@
-package storage
+package param
 
 import (
 	"github.com/PaddingDEV/Sender/utils"
@@ -6,13 +6,13 @@ import (
 	"net/http"
 )
 
-func genMustHasHeaderHandler(header string, c *gin.Context) func(*gin.Context) {
+func MustHasHeaderHandler(header string) func(*gin.Context) {
 	return func(c *gin.Context) {
 		h, exists := c.Get(header)
 		if !exists {
 			utils.HttpReturnWithErrAndAbort(c,
 				http.StatusBadRequest,
-				"header loss")
+				"header lost")
 			return
 		}
 		c.Set(header, h)
@@ -20,7 +20,7 @@ func genMustHasHeaderHandler(header string, c *gin.Context) func(*gin.Context) {
 	}
 }
 
-func genShouldHasHeaderHandler(header string, initV any, c *gin.Context) func(*gin.Context) {
+func ShouldHasHeaderHandler(header string, initV any) func(*gin.Context) {
 	return func(c *gin.Context) {
 		h, exists := c.Get(header)
 		if !exists {

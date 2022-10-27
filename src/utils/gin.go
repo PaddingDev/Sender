@@ -10,3 +10,7 @@ func HttpReturnWithErrAndAbort(c *gin.Context, httpCode int, msg string) {
 		"msg":  msg,
 	})
 }
+
+func GetGinQuery(c *gin.Context, key string) (val string, exist bool) {
+	return c.GetQuery(key)
+}

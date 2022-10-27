@@ -1,7 +1,7 @@
 package model
 
 const (
-	UuidHeader     = "UUID"
-	TokenHeader    = "Token"
-	ExpireAtHeader = "ExpireAt"
+	UuidHeader     = "uuid"
+	TokenHeader    = "token"
+	ExpireAtHeader = "expire_at"
 )

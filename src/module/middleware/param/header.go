@@ -9,11 +9,7 @@ import (
 func MustHasHeaderHandler(header string) func(*gin.Context) {
 	return func(c *gin.Context) {
 		h, exists := c.Get(header)
-		if utils.HttpAbortIf(
-			!exists,
-			c,
-			http.StatusBadRequest,
-			"header lost") {
+		if utils.HttpAbortIf(!exists, c, http.StatusBadRequest, "header lost") {
 			return
 		}
 		c.Set(header, h)

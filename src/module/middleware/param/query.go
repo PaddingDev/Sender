@@ -9,10 +9,7 @@ import (
 func MustHasQueryHandlerAndSet(key string, targetKey string) func(*gin.Context) {
 	return func(c *gin.Context) {
 		h, exists := c.GetQuery(key)
-		if !exists {
-			utils.HttpAbort(c,
-				http.StatusBadRequest,
-				"header lost")
+		if utils.HttpAbortIf(!exists, c, http.StatusBadRequest, "header lost") {
 			return
 		}
 		c.Set(targetKey, h)

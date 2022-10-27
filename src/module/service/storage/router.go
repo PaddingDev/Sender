@@ -21,7 +21,7 @@ func InitRouter(r *gin.RouterGroup) {
 
 	g2 := r.Group("/files")
 	{
-		g2.Use(auth.GenMidAuth(),
+		g2.Use(
 			size.SizeLimiterHandler(cfg.GetCfg().MaxNormalRequestBytes),
 			param.MustHasQueryHandlerAndSet(model.UuidHeader, model.UuidHeader),
 			param.ShouldHasHeaderHandler(model.TokenHeader, ""))

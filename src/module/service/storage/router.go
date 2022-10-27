@@ -8,7 +8,7 @@ import (
 func InitRouter(r *gin.RouterGroup) {
 	g := r.Group("/files")
 	{
-		g.Use(auth.MidAuth)
+		g.Use(auth.GenMidAuth())
 		g.POST("/upload", uploadFileHandler)
 		g.GET("/download", getFileHandler)
 		g.GET("/info", getFileInfoHandler)

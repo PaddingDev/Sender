@@ -23,8 +23,9 @@ type Config struct {
 type AuthTypeEnum string
 
 const (
-	None      AuthTypeEnum = "None"
-	BasicAuth AuthTypeEnum = "BasicAuth"
+	None         AuthTypeEnum = "None"
+	BasicAuth    AuthTypeEnum = "BasicAuth"
+	OnlyDebugMod AuthTypeEnum = "OnlyDebugMod"
 )
 
 type BasicAuthList map[string]string

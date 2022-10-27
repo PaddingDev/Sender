@@ -30,5 +30,5 @@ func onlyDebugModAuth(c *gin.Context) {
 		c.Next()
 		return
 	}
-	utils.HttpReturnWithErrAndAbort(c, http.StatusUnauthorized, "Unauthorised!")
+	utils.HttpAbort(c, http.StatusUnauthorized, "Unauthorised!")
 }

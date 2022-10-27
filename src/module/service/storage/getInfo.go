@@ -9,50 +9,58 @@ import (
 )
 
 func getFileInfoHandler(c *gin.Context) {
-	uuid := c.GetString(model.UuidHeader)
-	token := c.GetString(model.TokenHeader)
-	if uuid == "" {
-		utils.HttpReturnWithErrAndAbort(
-			c,
-			http.StatusBadRequest,
-			"need uuid")
+	info, needRet := getFileInfo(c)
+	if needRet {
 		return
 	}
-	path := getFilePath(uuid)
-	if !isPathExists(path) {
-		utils.HttpReturnWithErrAndAbort(
-			c,
-			http.StatusBadRequest,
-			"No file")
-	}
-	infoBs, err := utils.ReadFileToByte(path + "info.json")
-	if err != nil {
-		utils.HttpReturnWithErrAndAbort(
-			c,
-			http.StatusBadRequest,
-			"no info")
-	}
-	info := model.FileInfo{}
-	err = utils.FromJsonTo(infoBs, &info)
-	if err != nil {
-		utils.HttpReturnWithErrAndAbort(
-			c,
-			http.StatusBadRequest,
-			"failed to load info")
-	}
-	if time.Now().After(info.ExpiredAt) {
-		utils.HttpReturnWithErrAndAbort(
-			c,
-			http.StatusBadRequest,
-			"expired!")
-		_ = utils.RemoveFile(getFileStorePath(uuid))
-	}
-	if info.Token != token {
-		utils.HttpReturnWithErrAndAbort(
-			c,
-			http.StatusUnauthorized,
-			"Wrong token")
-	}
 	info.Token = ""
-	c.JSON(http.StatusOK, info)
+	c.JSON(200, info)
+}
+
+func getFileInfo(c *gin.Context) (info model.FileInfo, isAborted bool) {
+	isAborted = true
+	uuid := c.GetString(model.UuidHeader)
+	token := c.GetString(model.TokenHeader)
+	if utils.HttpAbortIf(uuid == "", c,
+		http.StatusBadRequest,
+		"need uuid") {
+		return
+	}
+
+	path := getFilePath(uuid)
+	if utils.HttpAbortIf(!isPathExists(path), c,
+		http.StatusBadRequest,
+		"No file") {
+		return
+	}
+
+	infoBs, err := utils.ReadFileToByte(path + "info.json")
+	if utils.HttpAbortIfNotNil(err, c,
+		http.StatusBadRequest,
+		"no info") {
+		return
+	}
+
+	err = utils.FromJsonTo(infoBs, &info)
+	if utils.HttpAbortIfNotNil(err, c,
+		http.StatusBadRequest,
+		"failed to load info") {
+		return
+	}
+
+	if utils.HttpAbortIf(
+		time.Now().After(info.ExpiredAt),
+		c, http.StatusBadRequest,
+		"expired!") {
+		_ = utils.RemoveFile(getFileStorePath(uuid))
+		return
+	}
+
+	if utils.HttpAbortIf(
+		info.Token != token,
+		c, http.StatusUnauthorized,
+		"Wrong token") {
+		return
+	}
+	return info, false
 }

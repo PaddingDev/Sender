@@ -15,39 +15,34 @@ func uploadFileHandler(c *gin.Context) {
 	token := c.GetString(model.TokenHeader)
 	expVal := c.GetInt(model.ExpireAtHeader)
 	if expVal > cfg.GetCfg().MaxExpireTime || expVal < cfg.GetCfg().MinExpireTime {
-		utils.HttpReturnWithErrAndAbort(c, http.StatusBadRequest, "out of range")
+		utils.HttpAbort(c, http.StatusBadRequest, "out of range")
 		return
 	}
 
 	expireAt := time.Now()
 	expireAt = expireAt.Add(time.Duration(expVal) * cfg.GetExpTimeUnit())
 
-	if err != nil {
-		utils.HttpReturnWithErrAndAbort(c, http.StatusUnauthorized, "No file is received")
+	if utils.HttpAbortIfNotNil(err, c, http.StatusUnauthorized, "No file is received") {
+		return
 	}
 
 	uuid := getFileUuid()
 	path := getFilePath(uuid)
 	isCreated := ensurePathExist(path)
-	if !isCreated {
-		utils.HttpReturnWithErrAndAbort(c, http.StatusBadGateway, "No idea")
+	if utils.HttpAbortIf(!isCreated, c, http.StatusBadGateway, "No idea") {
+		return
 	}
 
 	infoJson, _ := model.CreateFileInfoJson(file.Filename, token, expireAt)
 	err = utils.WriteToFile(getFileInfoPath(uuid), infoJson)
-	if err != nil {
+	if utils.HttpAbortIfNotNil(err, c, http.StatusInternalServerError, "failed to save info") {
 		_ = os.RemoveAll(path)
-		utils.HttpReturnWithErrAndAbort(c,
-			http.StatusInternalServerError,
-			"failed to save info")
 		return
 	}
 
 	if err = c.SaveUploadedFile(file, getFileStorePath(uuid)); err != nil {
 		_ = os.RemoveAll(path)
-		utils.HttpReturnWithErrAndAbort(c,
-			http.StatusInternalServerError,
-			"Save failed")
+		utils.HttpAbort(c, http.StatusInternalServerError, "Save failed")
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{
